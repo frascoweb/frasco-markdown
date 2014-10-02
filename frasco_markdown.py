@@ -1,6 +1,6 @@
 from frasco import Feature, action, ActionsView, current_app, Markup
 from frasco.utils import remove_yaml_frontmatter, wrap_in_markup
-from frasco.templating import render_layout, jinja_fragment_extension
+from frasco.templating import render_layout, jinja_fragment_extension, get_template_source
 import markdown
 import os
 
@@ -14,10 +14,8 @@ class MarkdownView(ActionsView):
         if self.template is None:
             return None
 
-        filename = os.path.join(current_app.template_path, self.template)
-        with open(filename) as f:
-            content = f.read()
-        html = current_app.features.markdown.convert(remove_yaml_frontmatter(content))
+        source = get_template_source(current_app, self.template)
+        html = current_app.features.markdown.convert(remove_yaml_frontmatter(source))
 
         if self.layout is None:
             return html
